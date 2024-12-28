@@ -1,0 +1,152 @@
+using System;
+using System.Collections.Generic;
+
+public class Ogrenci
+{
+    public int OgrenciID { get; set; }
+    public string Ad { get; set; }
+    public string Soyad { get; set; }
+    public string Email { get; set; }
+    public List<DersNotu> Notlar { get; set; }
+
+    public Ogrenci(int id, string ad, string soyad, string email)
+    {
+        OgrenciID = id;
+        Ad = ad;
+        Soyad = soyad;
+        Email = email;
+        Notlar = new List<DersNotu>();
+    }
+
+    // Öğrencinin ortalama notunu hesapla
+    public double Ortalama()
+    {
+        if (Notlar.Count == 0)
+            return 0;
+
+        double toplam = 0;
+        foreach (var dersNotu in Notlar)
+        {
+            toplam += dersNotu.Not;
+        }
+        return toplam / Notlar.Count;
+    }
+
+    // Öğrencinin geçmişini yazdır
+    public void GecmisiYazdir()
+    {
+        Console.WriteLine($"Öğrenci: {Ad} {Soyad}, Email: {Email}");
+        foreach (var dersNotu in Notlar)
+        {
+            Console.WriteLine($"Ders: {dersNotu.DersAdi}, Not: {dersNotu.Not}");
+        }
+        Console.WriteLine($"Ortalama Not: {Ortalama()}");
+    }
+}
+
+public class DersNotu
+{
+    public string DersAdi { get; set; }
+    public double Not { get; set; }
+
+    public DersNotu(string dersAdi, double notu)
+    {
+        DersAdi = dersAdi;
+        Not = notu;
+    }
+}
+
+public class Program
+{
+    static List<Ogrenci> ogrenciler = new List<Ogrenci>();
+
+    public static void Main(string[] args)
+    {
+        while (true)
+        {
+            Console.WriteLine("\nÖğrenci Kayıt ve Not Takip Sistemi");
+            Console.WriteLine("1. Öğrenci Kaydet");
+            Console.WriteLine("2. Not Ekle");
+            Console.WriteLine("3. Öğrenci Geçmişini Görüntüle");
+            Console.WriteLine("4. Çıkış");
+            Console.Write("Bir işlem seçin: ");
+            string secim = Console.ReadLine();
+
+            switch (secim)
+            {
+                case "1":
+                    OgrenciKaydet();
+                    break;
+                case "2":
+                    NotEkle();
+                    break;
+                case "3":
+                    OgrenciGecmisiGoruntule();
+                    break;
+                case "4":
+                    Environment.Exit(0);
+                    break;
+                default:
+                    Console.WriteLine("Geçersiz işlem.");
+                    break;
+            }
+        }
+    }
+
+    static void OgrenciKaydet()
+    {
+        Console.Write("Öğrenci ID: ");
+        int id = int.Parse(Console.ReadLine());
+        Console.Write("Öğrenci Adı: ");
+        string ad = Console.ReadLine();
+        Console.Write("Öğrenci Soyadı: ");
+        string soyad = Console.ReadLine();
+        Console.Write("Öğrenci Email: ");
+        string email = Console.ReadLine();
+
+        Ogrenci ogrenci = new Ogrenci(id, ad, soyad, email);
+        ogrenciler.Add(ogrenci);
+
+        Console.WriteLine("Öğrenci başarıyla kaydedildi.");
+    }
+
+    static void NotEkle()
+    {
+        Console.Write("Öğrenci ID: ");
+        int id = int.Parse(Console.ReadLine());
+        Ogrenci ogrenci = ogrenciler.Find(o => o.OgrenciID == id);
+
+        if (ogrenci != null)
+        {
+            Console.Write("Ders Adı: ");
+            string dersAdi = Console.ReadLine();
+            Console.Write("Notu: ");
+            double notu = double.Parse(Console.ReadLine());
+
+            DersNotu dersNotu = new DersNotu(dersAdi, notu);
+            ogrenci.Notlar.Add(dersNotu);
+
+            Console.WriteLine("Not başarıyla eklendi.");
+        }
+        else
+        {
+            Console.WriteLine("Öğrenci bulunamadı.");
+        }
+    }
+
+    static void OgrenciGecmisiGoruntule()
+    {
+        Console.Write("Öğrenci ID: ");
+        int id = int.Parse(Console.ReadLine());
+        Ogrenci ogrenci = ogrenciler.Find(o => o.OgrenciID == id);
+
+        if (ogrenci != null)
+        {
+            ogrenci.GecmisiYazdir();
+        }
+        else
+        {
+            Console.WriteLine("Öğrenci bulunamadı.");
+        }
+    }
+}
